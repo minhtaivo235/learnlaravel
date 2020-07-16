@@ -62,7 +62,7 @@ class ProductController extends Controller
         $data['product_content'] = $request->product_content;
         $data['category_id'] = $request->product_cate;
         $data['brand_id'] = $request->product_brand;
-        $data['product_status'] = $request->product_status;
+        
         $get_image = $request->file('product_image');
 
         if($get_image){
@@ -83,9 +83,7 @@ class ProductController extends Controller
         return Redirect::to('all-product');
 
 
-    	DB::table('tbl_product')->where('product_id',$id)->update($data);
-    	Session::put('message','Cập nhật sản phẩm thành công');
-    	return Redirect::to('all-product');
+    	
     }
 
     public function save_product(Request $request)
@@ -142,5 +140,29 @@ class ProductController extends Controller
     	DB::table('tbl_product')->where('product_id',$id)->update(['product_status'=>1]);
     	Session::put('message','Kích hoạt sản phẩm thành công');
     	return Redirect::to('all-product');	
+    }
+    // end admin page
+
+    //show index
+    public function details_product($id){
+        $cate_product = DB::table('tbl_category_product')->where('category_status','1')->orderby('category_id','desc')->get();
+
+        $brand_product = DB::table('tbl_brand')->where('brand_status','1')->orderby('brand_id','desc')->get();
+
+        $details_product = DB::table('tbl_product')
+        ->join('tbl_category_product','tbl_category_product.category_id','=','tbl_product.category_id')
+        ->join('tbl_brand','tbl_brand.brand_id','=','tbl_product.brand_id')
+        ->where('tbl_product.product_id',$id)->get();
+
+        foreach ($details_product as $key => $value){
+            $category_id = $value->category_id;
+        }
+        
+        $realted_product = DB::table('tbl_product')
+        ->join('tbl_category_product','tbl_category_product.category_id','=','tbl_product.category_id')
+        ->join('tbl_brand','tbl_brand.brand_id','=','tbl_product.brand_id')
+        ->where('tbl_category_product.category_id',$category_id)->whereNotIn('tbl_product.product_id',[$id])->limit(3)->get();
+
+        return view('pages.product.show_detail')->with('category',$cate_product)->with('brand',$brand_product)->with('product_details',$details_product)->with('relate',$realted_product);
     }
 }

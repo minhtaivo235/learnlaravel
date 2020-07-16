@@ -59,13 +59,7 @@
                                 @endforeach                                
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label for="exampleInputPassword1">Hiển thị</label>
-                            <select name="product_status" class="form-control input-sm m-bot15">           
-                                <option value="0">Ẩn</option>
-                                <option value="1">Hiển thị</option>
-                            </select>
-                        </div>
+                        
                         
                         <button type="submit" name="update_product" class="btn btn-info">Cập nhật sản phẩm</button>
                     </form>
